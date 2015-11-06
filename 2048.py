@@ -2,6 +2,7 @@ from random import randint
 from random import choice
 from os import system
 
+
 def create_field(n):
     # create random field n * n
 
@@ -12,6 +13,7 @@ def create_field(n):
             arr[i].append(0)
     return arr
 
+
 def fill_slot(field):
     # fill random empty slot
     if is_step(field) != False:
@@ -21,12 +23,13 @@ def fill_slot(field):
     else:
         return False
 
+
 def two_or_four():
     # 90 per = return 4, 10 per = return 2
+    li = [2] * 9 + [4]
 
-    if randint(1, 10) == 10:
-        return 4
-    return 2
+    return choice(li)
+
 
 def is_step(field):
     li = []
@@ -39,6 +42,7 @@ def is_step(field):
 
     return li
 
+
 def get_size():
     # set field size n * n
     q = ' <<< Set your side for game field \n' \
@@ -47,6 +51,7 @@ def get_size():
     while n < 3:
         n = int(raw_input(q))
     return n
+
 
 def start_game():
     # get size
@@ -65,6 +70,7 @@ def start_game():
     # start game
     game(field)
 
+
 def show_field(field):
     system('clear')
     print '<---------->'
@@ -72,14 +78,15 @@ def show_field(field):
         print i
     print '<---------->'
 
+
 def move(field, move='up'):
 
     if move == 'down':
         field = field[::-1]
     elif move == 'left':
-        field = turn_right(field)
+        field = turn_field(field, 3)
     elif move == 'right':
-        field = turn_left(field)
+        field = turn_field(field, 1)
 
     for i in range(len(field)):
         point = 0
@@ -107,11 +114,12 @@ def move(field, move='up'):
     if move == 'down':
         field = field[::-1]
     elif move == 'left':
-        field = turn_left(field)
+        field = turn_field(field, 1)
     elif move == 'right':
-        field = turn_right(field)
+        field = turn_field(field, 3)
 
     return field
+
 
 def game(field):
 
@@ -129,6 +137,7 @@ def game(field):
             break
         show_field(field)
 
+
 def action(x, field):
     if x == 'w':
         return move(field)
@@ -139,23 +148,14 @@ def action(x, field):
     elif x == 'd':
         return move(field, 'right')
 
+
 def turn_left(field):
-    arr = [[0] * (len(field)) for k in range(len(field))]
+    arr = []
+    for i in zip(*field):
+        arr.append(list(i))
 
-    for i in range(len(field)):
-        for j in range(len(field)):
-            arr[len(field) - 1 - j][i] = field[i][j]
+    return arr[::-1]
 
-    return arr
-
-def turn_right(field):
-    arr = [[0] * (len(field)) for k in range(len(field))]
-
-    for i in range(len(field)):
-        for j in range(len(field)):
-            arr[i][j] = field[len(field) - 1 - j][i]
-
-    return arr
 
 def get_side():
     res = 'nope'
@@ -164,5 +164,20 @@ def get_side():
                         '\'w\' for UP, \'a\' for RIGHT, \'s\' for DOWN, \'d\' for WEST) >>> ')
     else:
         return res.strip()
+
+
+def turn_field(field, n=0):
+    """
+    :param n:
+        if % 4 or n == 0 - turn on 360(deg),
+        if % 1 - turn on 270(deg)
+        if % 2 - turn on 180(deg)
+        if % 3 - turn on 90(deg)
+    :return: list - game field
+    """
+    for i in range(int(n)):
+        field = turn_left(field)
+    return field
+
 
 start_game()
